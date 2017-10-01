@@ -12,7 +12,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 Clone the repository to your local machine
 
-    git clone http://github.co.uk/apburton84/matchteller
+    git clone http://github.co.uk/apburton84/matchteller && cd matchteller
 
 ### Dependencies
 
@@ -57,7 +57,7 @@ Author: Anthony Burton <apburton84@googlemail.com>
 You can easily predict the outcome of a particular match, say `Stoke vs Arsenal`, by providing historical match data and an output format:
 
 ```
-python matchteller --match-data ../2015-2016/E0.csv --home-team Stoke --away-team Arsenal --output table
+python -m matchteller --match-data ../2015-2016/E0.csv --home-team Stoke --away-team Arsenal --output table
 ```
 
 MatchTeller prediction for Stoke vs Arsenal, given the 2015-2016 premier league data as input, is:
@@ -89,22 +89,30 @@ import matchteller as mt
 At present MatchTeller had a single predictor, the ``PoissonPredictor``.
 
 ```
-p = mt.PoissonPredictor('E0.csv')
+predictor = mt.predictor.poisson('E0.csv')
 ```
 
-Before we can perform a prediction we must call ``calc()``, which calculates the required team and league statistics.
+To perform a prediction we set the home and away teams and then call ``predict()``.
 
 ```
-p.calc()
-```
+predictor.setHomeTeam('Stoke')
+predictor.setAwayTeam('Arsenal')
 
-To perform a prediction call ``predict()`` and pass in the home and away teams.
-
+predictor.predict()
 ```
-outcome = p.predict('Stoke', 'Arsenal')
-```
-
 The model will return a dataframe containing the predicted outcome.
+
+Or, we can be more descriptive in our usage.
+
+```
+predictor.given('E0.csv').when('Stoke').played('Arsenal').on('2017-01-17').predict()
+```
+
+The above exampe also have the advantage of setting the specific date on which a match might occur.
+Using ``on()`` limits the dataset to matches before the match date for the prediction. Therefore, to
+predict all matches in the 2016-2017 season, and to provide 380 matches for each, you would need to
+supply two seasons of data.
+
 
 ```
       AWAY       DRAW       HOME

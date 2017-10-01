@@ -1,7 +1,7 @@
 import argparse
 from tabulate import tabulate
 
-from poisson_predictor import PoissonPredictor
+from .predictors import Poisson
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -17,11 +17,12 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.match_data and args.home_team and args.away_team:
-        predictor = PoissonPredictor(args.match_data.split(','))
+        predictor = Poisson()
 
-        predictor.calc()
-
-        predictor.predict(args.home_team, args.away_team)
+        (predictor.given(args.match_data.split(','))
+                  .when(args.home_team)
+                  .played(args.away_team)
+                  .predict())
 
         if not args.output or args.output.upper() == "TABLE":
             print(tabulate(
